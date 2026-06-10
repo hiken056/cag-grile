@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAG Ultimate Exam Simulator</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap');
+  
+  :root {
+    --bg: #0f172a;
+    --card: rgba(30, 41, 59, 0.85);
+    --border: rgba(255, 255, 255, 0.1);
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --success: #10b981;
+    --error: #ef4444;
+    --text: #f8fafc;
+    --text-muted: #94a3b8;
+    --warning: #f59e0b;
+  }
+  
+  * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+  
+  body { 
+    background-color: var(--bg); 
+    color: var(--text); 
+    min-height: 100vh; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    background-image: 
+      radial-gradient(circle at top right, #1e3a8a 0%, transparent 40%), 
+      radial-gradient(circle at bottom left, #064e3b 0%, transparent 40%); 
+    background-attachment: fixed; 
+  }
+  
+  .container { width: 100%; max-width: 850px; padding: 2rem; position: relative; }
+  
+  .glass-card { 
+    background: var(--card); 
+    backdrop-filter: blur(16px); 
+    -webkit-backdrop-filter: blur(16px); 
+    border: 1px solid var(--border); 
+    border-radius: 24px; 
+    padding: 3rem; 
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
+  }
+  
+  h1 { 
+    font-size: 2.5rem; 
+    font-weight: 800; 
+    margin-bottom: 1rem; 
+    background: linear-gradient(to right, #60a5fa, #34d399); 
+    -webkit-background-clip: text; 
+    color: transparent; 
+    text-align: center; 
+  }
+  
+  p.subtitle { text-align: center; color: var(--text-muted); margin-bottom: 2.5rem; font-size: 1.1rem; line-height: 1.5; }
+  
+  .btn { 
+    display: inline-block; 
+    padding: 1rem 2rem; 
+    border-radius: 12px; 
+    font-weight: 600; 
+    font-size: 1.1rem; 
+    cursor: pointer; 
+    transition: all 0.2s; 
+    border: none; 
+    text-align: center; 
+  }
+  
+  .btn-primary { 
+    background: var(--primary); 
+    color: white; 
+    width: 100%; 
+    box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.39); 
+  }
+  
+  .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); }
+  
+  .btn-secondary { background: rgba(255, 255, 255, 0.1); color: var(--text); }
+  .btn-secondary:hover { background: rgba(255, 255, 255, 0.2); transform: translateY(-2px); }
+  
+  /* Screens */
+  #quiz-screen, #result-screen { display: none; }
+  
+  /* Quiz Elements */
+  .progress-container { margin-bottom: 2rem; }
+  .progress-text { display: flex; justify-content: space-between; margin-bottom: 0.5rem; color: var(--text-muted); font-weight: 600; font-size: 0.9rem; }
+  .progress-bar { width: 100%; height: 8px; background: rgba(255, 255, 255, 0.1); border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #3b82f6, #34d399); width: 0%; transition: width 0.3s ease; }
+  
+  .live-score-box {
+    display: flex;
+    justify-content: space-between;
+    background: rgba(0,0,0,0.3);
+    border-radius: 12px;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+  }
+  .live-correct { color: var(--success); font-weight: 600; }
+  .live-wrong { color: var(--error); font-weight: 600; }
+  
+  .question-text { font-size: 1.4rem; font-weight: 600; margin-bottom: 0.5rem; line-height: 1.4; }
+  .question-hint { color: var(--primary); font-size: 0.9rem; margin-bottom: 2rem; font-weight: 500;}
+  
+  .options { display: flex; flex-direction: column; gap: 1rem; }
+  .option-label { 
+    display: flex; 
+    align-items: center; 
+    padding: 1.25rem; 
+    background: rgba(255, 255, 255, 0.05); 
+    border: 1px solid var(--border); 
+    border-radius: 12px; 
+    cursor: pointer; 
+    transition: all 0.2s; 
+    font-size: 1.1rem; 
+  }
+  .option-label:hover { background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.2); }
+  .option-label input { margin-right: 1rem; width: 20px; height: 20px; accent-color: var(--primary); cursor: pointer; flex-shrink: 0; }
+  .option-label.selected { background: rgba(59, 130, 246, 0.15); border-color: var(--primary); }
+  
+  /* Feedback Classes */
+  .option-label.correct-hit { background: rgba(16, 185, 129, 0.2); border-color: var(--success); color: var(--success); }
+  .option-label.missed-correct { border-color: var(--success); color: var(--success); box-shadow: inset 0 0 0 1px var(--success); }
+  .option-label.wrong-hit { background: rgba(239, 68, 68, 0.2); border-color: var(--error); color: var(--error); }
+  .option-label.disabled { pointer-events: none; opacity: 0.9; }
+
+  /* Explanation Box */
+  .explanation-box {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--primary);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 2rem;
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+  .explanation-title {
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.2rem;
+  }
+  .explanation-box b { color: #60a5fa; }
+  .explanation-box ul { padding-left: 1.5rem; margin-top: 0.5rem; margin-bottom: 0.5rem; }
+  .explanation-box li { margin-bottom: 0.5rem; }
+
+  .nav-buttons { display: flex; justify-content: space-between; margin-top: 2rem; gap: 1rem; }
+  .nav-buttons .btn { width: 48%; }
+  
+  /* Results Elements */
+  .score-container { text-align: center; margin-bottom: 3rem; }
+  .score-circle { 
+    width: 200px; 
+    height: 200px; 
+    border-radius: 50%; 
+    background: var(--border); 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    margin: 0 auto 1.5rem; 
+    position: relative; 
+  }
+  .score-circle::before { 
+    content: ""; 
+    position: absolute; 
+    width: 170px; 
+    height: 170px; 
+    background: var(--card); 
+    border-radius: 50%; 
+  }
+  .score-text { position: relative; font-size: 3rem; font-weight: 800; }
+  .score-text span { font-size: 1.5rem; color: var(--text-muted); }
+  
+  .review-container { display: flex; flex-direction: column; gap: 1.5rem; max-height: 50vh; overflow-y: auto; padding-right: 10px; margin-bottom: 2rem;}
+  .review-container::-webkit-scrollbar { width: 8px; }
+  .review-container::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 4px; }
+  .review-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+  
+  .review-card { background: rgba(0, 0, 0, 0.2); border-radius: 12px; padding: 1.5rem; border-left: 4px solid var(--border); }
+  .review-card.correct { border-left-color: var(--success); }
+  .review-card.incorrect { border-left-color: var(--error); }
+  .review-question { font-weight: 600; margin-bottom: 1rem; font-size: 1.1rem; }
+  
+  .review-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 99px; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.5rem; }
+  .badge-correct { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+  .badge-incorrect { background: rgba(239, 68, 68, 0.2); color: var(--error); }
+  
+  .answer-block { margin-bottom: 0.5rem; font-size: 0.95rem;}
+  .answer-block strong { color: var(--text-muted); }
+  .answer-list { margin-top: 0.25rem; padding-left: 1rem; list-style-type: none; }
+  .answer-list li { margin-bottom: 0.25rem; position: relative; }
+  .answer-list li::before { content: "•"; position: absolute; left: -1rem; color: var(--primary); }
+  
+  @media (max-width: 600px) {
+    .glass-card { padding: 2rem; }
+    .nav-buttons { flex-direction: column-reverse; }
+    .nav-buttons .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- START SCREEN -->
+  <div id="start-screen" class="glass-card">
+    <h1>CAG Exam Simulator</h1>
+    <p class="subtitle">60 Questions. Randomized order.<br>Select all correct options for each question to earn the point.</p>
+    <button class="btn btn-primary" onclick="startQuiz()">Start the Exam</button>
+  </div>
+  
+  <!-- QUIZ SCREEN -->
+  <div id="quiz-screen" class="glass-card">
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 0.5rem;">
+      <label style="cursor: pointer; color: var(--text-muted); font-size: 0.9rem; font-weight: 500; display: flex; align-items: center; gap: 0.5rem;">
+        <input type="checkbox" id="toggle-livescore" onchange="toggleLiveScore()" checked style="accent-color: var(--primary); cursor: pointer;"> 
+        Show Live Score
+      </label>
+    </div>
+    
+    <div id="live-score-container" class="live-score-box">
+      <div class="live-correct">Correct: <span id="val-correct">0</span></div>
+      <div class="live-wrong">Wrong: <span id="val-wrong">0</span></div>
+    </div>
+
+    <div class="progress-container">
+      <div class="progress-text">
+        <span id="question-counter">Completed: 0 / 60</span>
+        <span id="percentage-counter">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+    
+    <div id="question-container">
+      <div class="question-text" id="q-text">Loading question...</div>
+      <div class="question-hint">Note: Select ALL correct answers!</div>
+      <div class="options" id="options-container"></div>
+    </div>
+
+    <div id="explanation-container" class="explanation-box" style="display: none;">
+      <div class="explanation-title">💡 Detailed Logical Explanation</div>
+      <div id="explanation-text"></div>
+    </div>
+    
+    <div class="nav-buttons">
+      <button class="btn btn-secondary" id="btn-skip" onclick="skipQuestion()">Skip for Later</button>
+      <button class="btn btn-primary" id="btn-submit" onclick="submitAnswer()">Submit Answer</button>
+      <button class="btn btn-primary" id="btn-next" onclick="moveToNext()" style="display: none; width: 100%;">Next Question</button>
+    </div>
+  </div>
+
+  <!-- RESULT SCREEN -->
+  <div id="result-screen" class="glass-card">
+    <div class="score-container">
+      <h1>Exam Completed!</h1>
+      <p class="subtitle">Here is your final grade.</p>
+      <div class="score-circle" id="score-circle">
+        <div class="score-text" id="score-text">0<span>/60</span></div>
+      </div>
+    </div>
+    <h3 style="margin-bottom: 1rem; color: var(--text-muted);">Detailed Review:</h3>
+    <div class="review-container" id="review-container"></div>
+    <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 1rem;">Retake Exam</button>
+  </div>
+</div>
+
+<script>
+const rawDatabase = [
+  { 
+    q: "In expert systems, the control algorithm is stored in:", 
+    opts: [{t:"Code", c:true}, {t:"Knowledge (data)", c:false}, {t:"Both of the above", c:false}], 
+    exp: "<b>Concept: Artificial Intelligence Expert Systems</b><br>To make an AI system flexible, engineers split it into two completely separate parts:<br><ul><li><b>The Knowledge Base (Data):</b> This is like the system's memory. It contains pure facts, geometry, and technological data. It has no logic.</li><li><b>The Inference Engine (Code):</b> This is the brain. It is written in <b>code</b> and contains the control algorithm (the IF-THEN rules) that processes the data to make decisions.</li></ul>Therefore, the control algorithm lives strictly in the Code." 
+  },
+  { 
+    q: "The slots of a part are features of:", 
+    opts: [{t:"Manufacturing", c:true}, {t:"Design", c:false}, {t:"Both of the above", c:false}], 
+    exp: "<b>Concept: Feature Classification</b><br>Features are categorized based on their primary purpose:<br><ul><li><b>Design Features:</b> Elements added to fulfill a mechanical or aesthetic function (e.g., ribs for structural strength, bosses for mounting).</li><li><b>Manufacturing Features:</b> Elements dictated by <i>how the part is physically made</i> on a machine. A <b>slot</b> or a pocket is cut out by a milling machine, meaning it is defined by the tool's path and depth limits. Therefore, it is a manufacturing feature.</li></ul>" 
+  },
+  { 
+    q: "The ribs of a part are features of:", 
+    opts: [{t:"Manufacturing", c:false}, {t:"Design", c:true}, {t:"None of the above", c:false}], 
+    exp: "<b>Concept: Feature Classification</b><br>A <b>rib</b> is a thin structural support added to a part to increase its stiffness and strength without adding much weight. Because its primary purpose is to fulfill an engineering/mechanical requirement (strength) rather than being dictated by a machining tool, it is purely a <b>Design feature</b>." 
+  },
+  { 
+    q: "Abstract features involve:", 
+    opts: [{t:"Knowing all information starting from the design phase", c:false}, {t:"Knowing partial information during the design phase", c:false}, {t:"Knowing partial information, with engineering significance, during the design phase", c:true}], 
+    exp: "<b>Concept: Abstract vs. Concrete Features</b><br><ul><li><b>Concrete Features:</b> You know everything about it (e.g., a hole with exactly 5mm diameter and 10mm depth).</li><li><b>Abstract Features:</b> During the early stages of conceptual design, a designer might know they need a \"mounting hole\" for a screw, but they haven't decided the exact screw size yet. Thus, they only have <b>partial information</b>. However, it still holds <b>engineering significance</b> because it dictates the part's function. It is not just random geometry.</li></ul>" 
+  },
+  { 
+    q: "Which of the following are 'scientific' fields of interest in design?", 
+    opts: [{t:"CAD products known by the designer", c:false}, {t:"Designer's intuition", c:false}, {t:"Design knowledge", c:true}, {t:"The design process", c:true}, {t:"The object of design", c:true}], 
+    exp: "<b>Concept: Design as a Science</b><br>When we study design academically (Design Science), we focus on systematic, repeatable elements, not subjective feelings. The three pillars of design science are:<br>1. <b>The Object of design:</b> What are we building?<br>2. <b>The Design process:</b> How do we systematically build it (methodologies)?<br>3. <b>Design knowledge:</b> The established engineering theories, formulas, and data we use.<br><i>Intuition</i> and <i>personal software preferences</i> are subjective and not considered scientific fields." 
+  },
+  { 
+    q: "The necessary conditions for a feature to be considered as such are:", 
+    opts: [{t:"To be understood by the company manager", c:false}, {t:"To be a physical constituent of the part", c:true}, {t:"To be drawn using a CAD product", c:false}, {t:"To have engineering significance", c:true}, {t:"To be attachable to a portion of the part", c:true}], 
+    exp: "<b>Concept: Definition of a Feature</b><br>In CAD/CAM, a 'feature' is more than just random geometry (like a stray line). To be formally classified as a feature, it must:<br>1. <b>Be a physical constituent:</b> It has to physically exist on the final part.<br>2. <b>Be attachable:</b> It relates to a specific area of the part (e.g., a hole on the top face).<br>3. <b>Have engineering significance:</b> It must serve a purpose (e.g., a cooling fin, a mounting hole, a weight-saving pocket). Whether a manager understands it or what software drew it is irrelevant." 
+  },
+  { 
+    q: "Does feature-based design produce complete feature models?", 
+    opts: [{t:"Yes", c:false}, {t:"No", c:true}], 
+    exp: "<b>Concept: Feature Models</b><br>The answer is <b>No</b>. A feature model is an <i>abstraction</i> tailored for a specific task. For example, a stress-testing (CAE) feature model might ignore tiny aesthetic logos, while a manufacturing (CAM) feature model only cares about the geometry that needs to be cut. Because they are task-specific, they rarely represent 100% of the entire, complex reality of the product." 
+  },
+  { 
+    q: "Specify the correct chaining order of the modules:", 
+    opts: [{t:"CAPP -> CAM -> CAD", c:false}, {t:"CAPP -> CAD -> CAM", c:false}, {t:"CAM -> CAD -> CAPP", c:false}, {t:"CAD -> CAPP -> CAM", c:true}, {t:"CAD -> CAM -> CAPP", c:false}, {t:"CAM -> CAPP -> CAD", c:false}], 
+    exp: "<b>Concept: The Manufacturing Pipeline</b><br>The logical chronological order in a factory is:<br>1. <b>CAD (Design):</b> The engineer draws the 3D model.<br>2. <b>CAPP (Process Planning):</b> The computer analyzes the CAD model and writes the recipe/plan for how to build it (e.g., \"Step 1: Mill top. Step 2: Drill hole\").<br>3. <b>CAM (Manufacturing):</b> The actual robots and CNC machines execute the plan to cut the physical metal." 
+  },
+  { 
+    q: "Design knowledge is obtained from:", 
+    opts: [{t:"Previous projects", c:true}, {t:"Press information", c:false}, {t:"Catalogs", c:true}, {t:"Intuition", c:true}, {t:"Standards", c:true}], 
+    exp: "<b>Concept: Sources of Knowledge</b><br>Engineers do not work in a vacuum. They build their designs using formal data (like Industry <b>Standards</b> and component <b>Catalogs</b>), historical data (<b>Previous projects</b> the company has done), and their own human <b>Intuition</b> gained through years of experience. General press information is not a reliable source of engineering data." 
+  },
+  { 
+    q: "Which of the following are characteristics of a standard interface in CAD-CAM?", 
+    opts: [{t:"The system must be closed", c:false}, {t:"No semantic information should be lost during transfer", c:true}, {t:"Manipulation of only informational data", c:false}], 
+    exp: "<b>Concept: CAD/CAM Interfaces</b><br>When moving a 3D model from CAD software (like AutoCAD) to CAM software (to be machined), the interface (like IGES or STEP file formats) must be flawless. The most critical characteristic is that <b>no semantic information is lost</b>. If CAD defines a \"threaded hole,\" the CAM software must receive it as a \"threaded hole,\" not just a random cylinder of lines." 
+  },
+  { 
+    q: "Feature recognition belongs to:", 
+    opts: [{t:"CAD", c:false}, {t:"CAM", c:false}, {t:"CAPP", c:true}], 
+    exp: "<b>Concept: Computer-Aided Process Planning (CAPP)</b><br>Feature Recognition is the 'eyes' of the CAPP system. When a designer finishes a CAD model, it is just a bunch of geometry. The <b>CAPP</b> software scans this geometry and 'recognizes' patterns—it sees a cylinder subtracted from a block and realizes \"Aha! That is a through-hole.\" It uses this recognition to write the manufacturing plan." 
+  },
+  { 
+    q: "Data management problems in the CAD/CAM relationship, when changing a dimension, involve:", 
+    opts: [{t:"Reevaluating existing constraints", c:true}, {t:"Changing the material from which the part will be made", c:false}, {t:"Recalculating intersections", c:true}], 
+    exp: "<b>Concept: Parametric Data Management</b><br>Modern CAD is parametric. If you change a single dimension (e.g., making a box wider), the software has to do heavy math to fix the model. It must <b>recalculate intersections</b> (where the new wide box hits other parts) and <b>reevaluate existing constraints</b> (e.g., ensuring a hole stays exactly in the center of the newly widened box). Changing a dimension doesn't magically change the physical material." 
+  },
+  { 
+    q: "Concurrent engineering includes teams formed of:", 
+    opts: [{t:"Specialists in politics", c:false}, {t:"Janitors", c:false}, {t:"Beekeepers", c:false}, {t:"Designers", c:true}, {t:"Manufacturing engineers", c:true}, {t:"Marketing specialists", c:true}], 
+    exp: "<b>Concept: Concurrent Engineering</b><br>Traditionally, design was sequential (Designers finished, then threw it over the wall to Manufacturing). Concurrent engineering brings everyone into the room on Day 1 to work in parallel. This includes <b>Designers</b>, <b>Manufacturing Engineers</b> (to ensure it can actually be built), and <b>Marketing Specialists</b> (to ensure customers actually want it). This prevents costly redesigns later." 
+  },
+  { 
+    q: "Which of the following attributes belong to manufacturing features?", 
+    opts: [{t:"Geometry", c:true}, {t:"Input/output limitations", c:true}, {t:"Having a numeric identifier", c:false}, {t:"Depth limits", c:true}, {t:"Price", c:false}, {t:"Tolerances", c:true}], 
+    exp: "<b>Concept: Manufacturing Feature Attributes</b><br>A manufacturing feature (like a drilled hole) is defined by the physical limits of the machine making it. It is defined by its <b>Geometry</b>, strict <b>Tolerances</b> (how accurate the cut must be), <b>Depth limits</b> (a drill bit can only go so deep), and tooling <b>Input/Output limitations</b>. Price and random IDs are administrative data, not physical manufacturing attributes." 
+  },
+  { 
+    q: "The systemic integration of the expert system with CAD is done by:", 
+    opts: [{t:"Interactive use of both systems via a common interface", c:false}, {t:"Logical, centralized data management", c:true}, {t:"File transfer", c:false}, {t:"Automatic deduction of part features", c:false}], 
+    exp: "<b>Concept: Systemic Integration</b><br>True integration in a modern factory is not achieved by messy, manual file transfers (exporting/importing files). True integration is achieved through a <b>Logical, centralized data management</b> system (a single central database). When CAD updates a part, the Expert System instantly sees it because they are both looking at the exact same database." 
+  },
+  { 
+    q: "Using CAPP systems has the following potential advantages:", 
+    opts: [{t:"Allows control from the client", c:false}, {t:"Produces achievable plans", c:true}, {t:"Reduces manufacturer's work", c:false}, {t:"Reduces the skilled planner's work", c:true}], 
+    exp: "<b>Concept: Advantages of CAPP</b><br>Process planning is incredibly complex and requires highly skilled human engineers. A CAPP (Computer-Aided Process Planning) system automates this, drastically <b>reducing the skilled planner's workload</b>. Furthermore, because it uses standardized algorithms instead of human guesswork, it consistently produces safe, standardized, and <b>achievable plans</b>." 
+  },
+  { 
+    q: "The knowledge base of the expert system includes:", 
+    opts: [{t:"Technological data", c:true}, {t:"Geometric data", c:true}, {t:"IF-THEN rules", c:false}], 
+    exp: "<b>Concept: Expert System Architecture</b><br>Remember that Expert Systems are split in two:<br>1. The <b>Knowledge Base</b> stores only facts and data, specifically <b>Technological</b> and <b>Geometric</b> data.<br>2. The Inference Engine stores the logic, which includes the <b>IF-THEN rules</b>. Therefore, rules do not belong in the knowledge base." 
+  }, 
+  { 
+    q: "Operation planning in manufacturing includes:", 
+    opts: [{t:"Selecting machining tools", c:true}, {t:"Choosing the effective machine for machining", c:false}, {t:"Selecting the product storage location", c:false}, {t:"Interpreting the product model", c:true}, {t:"Selecting the machining machines", c:true}], 
+    exp: "<b>Concept: Operation Planning</b><br>To write a manufacturing plan, you must first <b>interpret the product model</b> to see what needs to be made. Then, you must <b>select the machines</b> (e.g., \"we will use CNC Lathe #4\") and <b>select the machining tools</b> (e.g., \"using a 10mm carbide drill bit\"). Storage location is handled by warehouse logistics (ASRS), not operation planning." 
+  },
+  { 
+    q: "What is the future concept for 'management by objectives'?", 
+    opts: [{t:"Total Quality Management (TQM)", c:false}, {t:"Management by exceptions", c:false}, {t:"Management by continuous learning and improvement", c:true}], 
+    exp: "<b>Concept: Modern Management Theory</b><br>\"Management by Objectives\" (setting rigid, static goals for the year) is considered an older, less adaptable methodology. The modern future concept is <b>Management by continuous learning and improvement</b> (similar to Kaizen or Agile), where goals dynamically adapt and processes are constantly tweaked based on new data." 
+  },
+  { 
+    q: "Which of the following are external factors influencing an enterprise's adaptability?", 
+    opts: [{t:"Technology", c:false}, {t:"Clients", c:true}, {t:"Public policy", c:true}, {t:"Market", c:true}, {t:"Management", c:false}, {t:"Quality", c:false}], 
+    exp: "<b>Concept: Enterprise Adaptability</b><br>A company faces forces it can control (Internal) and forces it cannot control (External).<br><ul><li><b>External Factors:</b> The demands of <b>Clients</b>, shifts in the global <b>Market</b>, and new <b>Public policies/laws</b>.</li><li><b>Internal Factors:</b> The company's <b>Management</b> structure and the <b>Technology</b> they choose to buy.</li></ul>" 
+  },
+  { 
+    q: "What is the future concept for 'database + application programs = system'?", 
+    opts: [{t:"Centralized IT systems", c:false}, {t:"Data + Operations = Object", c:true}, {t:"Collections of intelligent agents = intelligent systems", c:true}], 
+    exp: "<b>Concept: Evolution of Software Architecture</b><br>The old model was a dumb database connected to a monolithic application program. The modern future concept involves Object-Oriented Programming (where <b>Data + Operations = Object</b>, encapsulating behavior with data) and distributed microservices (where <b>Collections of intelligent agents</b> interact to form complex <b>intelligent systems</b>)." 
+  },
+  { 
+    q: "Which of the following operations can be done to an open GKS segment?", 
+    opts: [{t:"It cannot be redisplayed", c:false}, {t:"New primitives can be added to it", c:true}, {t:"Its attributes can be modified", c:false}, {t:"Geometric transformations cannot be applied to it", c:true}, {t:"The workstation description table can be modified", c:false}], 
+    exp: "<b>Concept: GKS Segments</b><br>In the Graphical Kernel System (GKS), a 'segment' is a grouped collection of graphics. When a segment is <b>Open</b>, it is actively recording. Because it is recording, you <b>CAN add new primitives</b> to it. However, because it is not yet finished, <b>geometric transformations CANNOT be applied to it</b> until you close it." 
+  },
+  { 
+    q: "A projection where the center of projection is at a finite distance is called:", 
+    opts: [{t:"Central", c:true}, {t:"Cylindrical", c:false}, {t:"Conic", c:true}, {t:"Parallel", c:false}], 
+    exp: "<b>Concept: 3D to 2D Projections</b><br>Imagine a light source casting a shadow of a 3D object onto a 2D wall. If the light source (center of projection) is close to the object (a <b>finite distance</b>), the light rays spread out like a cone, creating perspective distortion. This is called a <b>Central</b> or <b>Conic</b> projection." 
+  },
+  { 
+    q: "A projection where the center of projection is at an infinite distance is called:", 
+    opts: [{t:"Central", c:false}, {t:"Cylindrical", c:true}, {t:"Conic", c:false}, {t:"Parallel", c:true}], 
+    exp: "<b>Concept: 3D to 2D Projections</b><br>If the light source casting the shadow is infinitely far away (like the Sun), all the light rays hit the object perfectly parallel to one another, forming a cylinder of rays. This creates no perspective distortion (objects don't shrink in the distance). This is called a <b>Parallel</b> or <b>Cylindrical</b> projection (used in engineering isometric views)." 
+  },
+  { 
+    q: "Which of the following elements characterize a cyber-physical system (CPS)?", 
+    opts: [{t:"Online performance requirements", c:false}, {t:"Inputs and feedback from/to the physical environment", c:true}, {t:"Wide geographic distribution", c:true}, {t:"Narrow-scale control systems", c:false}], 
+    exp: "<b>Concept: Cyber-Physical Systems (CPS)</b><br>CPS is the backbone of Industry 4.0. It involves connecting physical machinery to digital networks (IoT). Because sensors are everywhere, it constantly takes <b>inputs and feedback from the physical environment</b>. Because it relies on the internet/cloud, it allows for <b>wide geographic distribution</b> (e.g., controlling a factory in Asia from a computer in Europe)." 
+  },
+  { 
+    q: "Production automation deals with:", 
+    opts: [{t:"Discrete event systems", c:true}, {t:"Continuous systems", c:false}], 
+    exp: "<b>Concept: Manufacturing Types</b><br><ul><li><b>Continuous Systems:</b> Used in chemical plants or oil refineries where liquid flows constantly without stopping.</li><li><b>Discrete Event Systems:</b> Used in factory production lines (making cars, phones, parts). Things happen in distinct, countable steps or 'events' (e.g., Part arrives -> Drill hole -> Move part). Therefore, production automation deals with discrete events.</li></ul>" 
+  },
+  { 
+    q: "Which CIM module is dedicated to internal transport?", 
+    opts: [{t:"FMS", c:false}, {t:"ASRS", c:false}, {t:"CAM", c:false}, {t:"CAD", c:false}, {t:"AGVS", c:true}], 
+    exp: "<b>Concept: Factory Floor Logistics</b><br><b>AGVS</b> stands for <b>Automated Guided Vehicle System</b>. These are the autonomous robots, carts, and forklifts that follow tracks or lasers on the floor to move parts from one machine to another. They are dedicated entirely to <b>internal transport</b>. (ASRS is for storage, FMS is the machining cell)." 
+  },
+  { 
+    q: "The polynomial defining a parameterized spline curve can be of degree:", 
+    opts: [{t:"4", c:false}, {t:"3", c:true}, {t:"1", c:true}, {t:"2", c:true}, {t:"0 (zero)", c:false}], 
+    exp: "<b>Concept: Spline Mathematics</b><br>In CAD, parameterized spline curves are calculated using polynomial math. They are typically defined by:<br>Degree 1 (Linear - straight lines)<br>Degree 2 (Quadratic curves)<br>Degree 3 (Cubic curves). Cubic splines are the most common because they provide smooth, continuous curves without requiring massive computational power." 
+  },
+  { 
+    q: "An axis of rotation (a line), a generator, and two rotation angles (start and end) define a surface of:", 
+    opts: [{t:"Resolution", c:false}, {t:"Revolution", c:true}, {t:"Tabulated cylinder", c:false}, {t:"Spline", c:false}, {t:"Ruled", c:false}], 
+    exp: "<b>Concept: 3D Modeling Techniques</b><br>If you take a 2D shape (the <b>generator</b>) and spin it around a central line (the <b>axis of rotation</b>) by a certain amount (the <b>rotation angles</b>), you are revolving it. This creates a surface or solid of <b>Revolution</b> (like modeling a vase, a tire, or a shaft)." 
+  },
+  { 
+    q: "The Definition Space (DS):", 
+    opts: [{t:"Uses the same unit of measure as the model space", c:true}, {t:"Is fixed in relation to the model", c:true}, {t:"Is temporary", c:false}], 
+    exp: "<b>Concept: Coordinate Spaces</b><br>The <b>Definition Space (DS)</b> is the absolute, permanent world coordinate system of your CAD file. Because it is the absolute world, it is <b>fixed</b> in relation to the model. To ensure math works correctly, it <b>uses the same unit of measure</b> (like millimeters) as the temporary Model Space (MS) that designers move around." 
+  },
+  { 
+    q: "Which of the following phases belong to the descriptive model?", 
+    opts: [{t:"Problem definition", c:false}, {t:"Evaluation", c:true}, {t:"Detail design", c:false}, {t:"Operation generation", c:true}, {t:"Conceptual design", c:false}], 
+    exp: "<b>Concept: The Descriptive Design Model</b><br>The descriptive model studies how designers <i>actually</i> work in the real world (messy, iterative trial and error). It primarily consists of generating ideas (<b>Operation generation</b>) and testing them (<b>Evaluation</b>) in rapid loops. The clean, 3-step logical process (Problem -> Concept -> Detail) belongs to the Prescriptive model." 
+  },
+  { 
+    q: "In GKS, the 'window/viewport' transformation makes the conversion:", 
+    opts: [{t:"SCR -> SCD", c:false}, {t:"SCD -> SCR", c:false}, {t:"SCD -> SCN", c:false}, {t:"SCN -> SCR", c:false}, {t:"SCN -> SCD", c:false}, {t:"SCR -> SCN", c:true}], 
+    exp: "<b>Concept: GKS Transformation Pipeline Step 1</b><br>GKS uses a pipeline to get from real-world math to screen pixels. The first step is the <b>window/viewport</b> transformation. This takes your raw, real-world coordinates (<b>SCR</b> - System Coordinates Real) and scales them into a generic, normalized middle-ground square (<b>SCN</b> - System Coordinates Normalized)." 
+  },
+  { 
+    q: "In GKS, the 'workstation' transformation makes the conversion:", 
+    opts: [{t:"SCR -> SCD", c:false}, {t:"SCD -> SCR", c:false}, {t:"SCD -> SCN", c:false}, {t:"SCN -> SCR", c:false}, {t:"SCN -> SCD", c:true}, {t:"SCR -> SCN", c:false}], 
+    exp: "<b>Concept: GKS Transformation Pipeline Step 2</b><br>After the first step converts data to normalized coordinates (SCN), the <b>workstation</b> transformation takes over. It maps the generic normalized data (<b>SCN</b>) onto the actual physical hardware pixels of the specific monitor or printer you are using (<b>SCD</b> - System Coordinates Device)." 
+  },
+  { 
+    q: "A point can be represented by:", 
+    opts: [{t:"Natural coordinates (1x3 matrix)", c:true}, {t:"Homogeneous coordinates (1x4 matrix)", c:true}, {t:"Homogeneous coordinates (1x2 matrix)", c:false}, {t:"Natural coordinates (1x4 matrix)", c:false}], 
+    exp: "<b>Concept: Mathematical Representation of Points</b><br>In a 3D space, a point naturally has an X, Y, and Z coordinate. This is represented as a 1x3 matrix (<b>Natural coordinates</b>). However, to perform complex computer graphics math (like translation and perspective projection using a single matrix multiplication), a dummy 4th coordinate 'W' is added [X, Y, Z, 1]. This is a 1x4 matrix known as <b>Homogeneous coordinates</b>." 
+  },
+  { 
+    q: "Which industrial revolution is starting in this period?", 
+    opts: [{t:"Fifth", c:false}, {t:"Third", c:false}, {t:"Fourth (Industry 4.0)", c:true}], 
+    exp: "<b>Concept: Industry 4.0</b><br>We are currently entering the <b>Fourth Industrial Revolution (Industry 4.0)</b>. <br>1st: Steam/Mechanization<br>2nd: Electricity/Mass Production<br>3rd: Computers/Basic Automation<br>4th: Cyber-Physical Systems, Internet of Things (IoT), AI, and fully integrated smart factories." 
+  },
+  { 
+    q: "Which of the following GKS primitives are sufficient for industrial technical drawings?", 
+    opts: [{t:"Cell array", c:false}, {t:"Fill area", c:false}, {t:"Text", c:true}, {t:"Polyline", c:true}, {t:"Generalized drawing primitive", c:false}, {t:"Polymarker", c:true}], 
+    exp: "<b>Concept: 2D Drafting Primitives</b><br>An industrial 2D technical drawing (blueprint) is visually very simple. You only need to draw lines (<b>Polyline</b>), mark specific nodes or centers (<b>Polymarker</b>), and write dimensions/notes (<b>Text</b>). Complex elements like Fill areas or pixel Cell arrays are not strictly required for standard mechanical drafts." 
+  },
+  { 
+    q: "Seen as a finite state machine, how many operational states does GKS have?", 
+    opts: [{t:"6", c:false}, {t:"5", c:true}, {t:"4", c:false}, {t:"3", c:false}], 
+    exp: "<b>Concept: GKS State Machine</b><br>GKS operates as a strict finite state machine with exactly <b>5 states</b>:<br>1. GKS Closed<br>2. GKS Open<br>3. Workstation Open<br>4. Workstation Active<br>5. Segment Open<br>The system must move through these states in order to draw graphics." 
+  },
+  { 
+    q: "A conic arc can come from a:", 
+    opts: [{t:"Hyperbola", c:true}, {t:"Cone", c:false}, {t:"Circle", c:false}, {t:"Parabola", c:true}, {t:"Truncated cone", c:false}, {t:"Ellipse", c:true}], 
+    exp: "<b>Concept: Analytical Geometry</b><br>A 'conic section' (or conic arc) is the 2D curve formed when a flat plane slices through a 3D geometric cone. Depending on the angle of the slice, the resulting curve will be an <b>Ellipse</b>, a <b>Parabola</b>, or a <b>Hyperbola</b>. (Note: A circle is technically a special type of ellipse, but the primary pure conics are the three listed)." 
+  },
+  { 
+    q: "What is the future concept for 'technology-oriented solutions'?", 
+    opts: [{t:"Generic packages and systems", c:true}, {t:"Business-oriented IT solutions", c:false}, {t:"Human-oriented systems", c:false}], 
+    exp: "<b>Concept: IT Adaptability</b><br>In the past, companies built highly customized, isolated technology solutions for specific problems. The future concept is to use <b>Generic packages and systems</b> (like modern ERPs or cloud platforms) that are highly adaptable and scalable out-of-the-box, rather than reinventing the wheel every time." 
+  },
+  { 
+    q: "Which of the following are internal factors influencing an enterprise's adaptability?", 
+    opts: [{t:"Quality", c:false}, {t:"Clients", c:false}, {t:"Public policy", c:false}, {t:"Market", c:false}, {t:"Management", c:true}, {t:"Technology", c:true}], 
+    exp: "<b>Concept: Internal Enterprise Factors</b><br>Adaptability relies on what a company can control from within. The company's <b>Management</b> structure (agile vs rigid bureaucracy) and the <b>Technology</b> they invest in (modern software vs outdated servers) are internal factors. Clients, Markets, and Public policy are external." 
+  },
+  { 
+    q: "In a CIM system, who are the participants in the information flow?", 
+    opts: [{t:"Communications", c:true}, {t:"Special information", c:true}, {t:"Production", c:true}, {t:"People", c:true}], 
+    exp: "<b>Concept: Computer Integrated Manufacturing (CIM)</b><br>CIM is all about total integration. Data doesn't just flow between machines. The information flow includes the human workers (<b>People</b>), the physical machines (<b>Production</b>), the network infrastructure (<b>Communications</b>), and all the business data (<b>Special information</b>)." 
+  },
+  { 
+    q: "Which of the following phases belong to the prescriptive model?", 
+    opts: [{t:"Detail design", c:true}, {t:"Operation generation", c:false}, {t:"Problem definition", c:true}, {t:"Conceptual design", c:true}, {t:"Evaluation", c:false}], 
+    exp: "<b>Concept: The Prescriptive Design Model</b><br>The prescriptive model is the 'ideal', algorithmic way engineers *should* design things. It follows a strict, logical sequence:<br>1. <b>Problem definition:</b> Understand what needs to be built.<br>2. <b>Conceptual design:</b> Brainstorm basic solutions.<br>3. <b>Detail design:</b> Create the final, precise CAD models." 
+  },
+  { 
+    q: "The Model Space (MS):", 
+    opts: [{t:"Uses the same unit of measure as the definition space", c:true}, {t:"Is fixed in relation to the model", c:false}, {t:"Is temporary", c:true}], 
+    exp: "<b>Concept: Coordinate Spaces</b><br>Unlike the absolute, fixed Definition Space, the <b>Model Space (MS)</b> is a local coordinate system. It is <b>temporary</b> (you can create a new model space on any face of your part to easily draw on it) and it moves around. However, to keep math accurate, it must <b>use the same unit of measure</b> as the absolute space." 
+  },
+  { 
+    q: "In which CIM module is the product's technological record produced?", 
+    opts: [{t:"CAPS", c:false}, {t:"CAM", c:false}, {t:"CAD", c:false}, {t:"CAE", c:false}, {t:"CAPP", c:true}], 
+    exp: "<b>Concept: CAPP (Computer-Aided Process Planning)</b><br>The technological record is the step-by-step 'recipe' detailing how the part will be manufactured (e.g., 'Step 1: Mill top face. Step 2: Heat treat'). <b>CAPP</b> is the software module responsible for analyzing the design and automatically generating this exact technological record." 
+  },
+  { 
+    q: "Which CIM module is dedicated to raw materials (semifabricate)?", 
+    opts: [{t:"FMS", c:true}, {t:"CAM", c:false}, {t:"ARS", c:false}, {t:"ASRS", c:true}, {t:"CAD", c:false}], 
+    exp: "<b>Concept: Factory Floor Modules</b><br>Raw materials (unmachined blocks of metal) are physically handled by two main systems: The <b>ASRS</b> (Automated Storage and Retrieval System), which warehouses the raw materials, and the <b>FMS</b> (Flexible Manufacturing System), which physically loads the raw materials into the machines to be cut." 
+  },
+  { 
+    q: "What command is used to manage transparent drawing sheets in CAD?", 
+    opts: [{t:"LAYER", c:true}, {t:"TRIM", c:false}, {t:"EXPLODE", c:false}, {t:"CSG", c:false}], 
+    exp: "<b>Concept: 2D CAD Organization</b><br>In AutoCAD and similar software, the <b>LAYER</b> command allows you to organize drawings by placing different elements (like walls, electrical wiring, and plumbing) on separate, stackable, transparent sheets. You can turn these layers on or off for clarity." 
+  },
+  { 
+    q: "Which of the following can act as a cutting edge for the Trim operation?", 
+    opts: [{t:"A point", c:true}, {t:"A circle", c:true}, {t:"A line", c:true}, {t:"An arc", c:true}], 
+    exp: "<b>Concept: The Trim Command</b><br>The Trim command removes parts of an object that extend past a cutting boundary. Because CAD math calculates intersections between any geometry, <b>any</b> geometric entity—a Point, a Line, an Arc, or a Circle—can act as the 'knife' edge to trim another intersecting object." 
+  },
+  { 
+    q: "The graphical representation of a dimension requires:", 
+    opts: [{t:"Dimension line", c:true}, {t:"Extension lines", c:true}, {t:"Dimension text", c:true}, {t:"Arrows (Terminations)", c:true}, {t:"Material type", c:false}], 
+    exp: "<b>Concept: Technical Drafting Dimensions</b><br>To properly draw a dimension on a blueprint, you need four graphical parts: The <b>Extension lines</b> (which anchor to the part), the <b>Dimension line</b> (the line spanning the gap), the <b>Arrows</b> (terminations at the end of the line), and the <b>Dimension text</b> (the actual number). Material type is a note, not a graphical part of a dimension." 
+  },
+  { 
+    q: "Solid modeling is preferred over surface modeling because:", 
+    opts: [{t:"It allows the calculation of mass properties (weight, volume, center of gravity)", c:true}, {t:"It requires less computational power", c:false}, {t:"It relies entirely on wireframes", c:false}, {t:"It has zero volume", c:false}], 
+    exp: "<b>Concept: Solid vs. Surface Modeling</b><br>A surface model is just an empty shell with zero thickness. A Solid model tells the computer that the inside is 'full'. Because it calculates true internal volume, engineers can assign a material density (like aluminum) and let the software automatically calculate <b>mass properties like weight, volume, and the center of gravity</b>." 
+  },
+  { 
+    q: "Constructive Solid Geometry (CSG) relies on which operations?", 
+    opts: [{t:"Union", c:true}, {t:"Subtraction / Difference", c:true}, {t:"Intersection", c:true}, {t:"Extrusion", c:false}, {t:"Sweeping", c:false}], 
+    exp: "<b>Concept: Constructive Solid Geometry</b><br>CSG is a modeling technique where complex parts are built by combining simple 3D primitives (spheres, cubes). It strictly uses Boolean mathematical operations to combine them: <b>Union</b> (add together), <b>Subtraction/Difference</b> (cut one out of the other), and <b>Intersection</b> (keep only the overlapping area)." 
+  },
+  { 
+    q: "A Polyline in CAD is characterized by:", 
+    opts: [{t:"Being a single unified entity", c:true}, {t:"Containing only straight lines", c:false}, {t:"Mixing straight lines and arcs", c:true}, {t:"Having an adjustable thickness", c:true}], 
+    exp: "<b>Concept: CAD Polylines</b><br>Unlike a group of individual lines, a Polyline is treated by the software as a <b>single unified entity</b>. It is highly versatile: it can <b>mix straight lines and curved arcs</b> seamlessly, and unlike basic lines, a polyline can have a globally or locally <b>adjustable thickness</b>." 
+  },
+  { 
+    q: "Which of the following are analytical curves in planar drawing?", 
+    opts: [{t:"Circle", c:true}, {t:"Spline curves", c:false}, {t:"Conics", c:true}, {t:"Line", c:true}], 
+    exp: "<b>Concept: Analytical vs Synthetic Curves</b><br><ul><li><b>Analytical curves:</b> Perfect, simple shapes defined by exact mathematical equations (e.g., y=mx+b). These include <b>Lines</b>, <b>Circles</b>, and <b>Conics</b>.</li><li><b>Synthetic curves:</b> Complex shapes approximated by algorithms because a single simple equation cannot define them. Splines fall into this category.</li></ul>" 
+  },
+  { 
+    q: "To generate a solid by sweeping (extrusion or revolution), you need:", 
+    opts: [{t:"A trajectory", c:true}, {t:"A closed 2D shape (generator)", c:true}, {t:"A point cloud", c:false}, {t:"A wireframe box", c:false}], 
+    exp: "<b>Concept: Sweeping Operations</b><br>Sweeping is the process of dragging a 2D shape through 3D space to leave a solid trail. To do this, you absolutely need two things: The <b>closed 2D shape (the generator)</b> acting as the cookie-cutter, and the <b>trajectory</b> acting as the path that the shape is dragged along." 
+  },
+  { 
+    q: "Boundary Representation (B-Rep) defines objects using:", 
+    opts: [{t:"Faces", c:true}, {t:"Volumes", c:false}, {t:"Edges", c:true}, {t:"Vertices / Nodes", c:true}], 
+    exp: "<b>Concept: Boundary Representation (B-Rep)</b><br>Unlike CSG (which adds/subtracts solid primitives), B-Rep defines a solid by mapping out its topological \"skin\". It wraps an empty space with a watertight boundary consisting entirely of <b>Faces</b> (the surfaces), <b>Edges</b> (where faces meet), and <b>Vertices</b> (the corner points)." 
+  },
+  { 
+    q: "What is a main characteristic of a solid model compared to a wireframe model?", 
+    opts: [{t:"It completely and unambiguously represents the volume", c:true}, {t:"It is defined only by edges and causes optical illusions", c:false}, {t:"It cannot be assigned material properties", c:false}], 
+    exp: "<b>Concept: Solid vs. Wireframe</b><br>A wireframe model only draws the edges (like a cage), which can cause visual ambiguity (the Necker Cube illusion—you can't tell which side is the front). A solid model mathematically differentiates 'inside' from 'outside', meaning it <b>completely and unambiguously represents the volume</b>." 
+  },
+  { 
+    q: "What is the purpose of a P&ID diagram?", 
+    opts: [{t:"To show the exact 3D location of pipes", c:false}, {t:"To map out the logical connections of a process plant using standardized symbols", c:true}, {t:"To calculate the mass of the building", c:false}], 
+    exp: "<b>Concept: P&ID (Piping and Instrumentation Diagram)</b><br>A P&ID is not a physical 3D map. It is a 2D schematic that maps out the <b>logical flow and connections</b> of a plant (valves, pumps, pipes, sensors) using standardized ISA symbols. It shows how the system operates, not where the pipes physically live in the building." 
+  },
+  { 
+    q: "What is the purpose of a PCB (Printed Circuit Board)?", 
+    opts: [{t:"To provide mechanical support for components", c:true}, {t:"To provide electrical connections via conductive pathways", c:true}, {t:"To cool down the system", c:false}, {t:"To run software code natively", c:false}], 
+    exp: "<b>Concept: Printed Circuit Boards (PCB)</b><br>A PCB has two main jobs: 1. To act as a rigid fiberglass base to <b>provide mechanical support</b> so components don't hang by wires. 2. To use copper traces to <b>provide the electrical connections</b> between those components. The PCB itself does not run software." 
+  },
+  { 
+    q: "Which of the following are true regarding THT (Through-Hole Technology)?", 
+    opts: [{t:"Components have pins inserted into drilled holes", c:true}, {t:"Components are microscopic and mounted on the surface", c:false}, {t:"Easy to solder by hand for prototyping", c:true}], 
+    exp: "<b>Concept: THT in Electronics</b><br>Through-Hole Technology (THT) involves components with long metal legs/pins. These pins are <b>inserted into holes drilled completely through the board</b> and soldered on the other side. Because the parts are large and sturdy, they are very <b>easy to solder by hand</b> for DIY projects and prototyping." 
+  },
+  { 
+    q: "Which of the following are true regarding SMD (Surface Mount Devices)?", 
+    opts: [{t:"Mounted directly to the surface of the PCB", c:true}, {t:"Requires drilling holes completely through the board", c:false}, {t:"Allows much higher component density than THT", c:true}], 
+    exp: "<b>Concept: SMD in Electronics</b><br>Surface Mount Devices (SMDs) are tiny modern components that do not have long pins and do not require holes. They are glued and <b>mounted directly to the surface</b> of the board. Because they are tiny and don't require drills to pass through the board, they allow for <b>much higher component density</b> (making modern smartphones possible)." 
+  },
+  { 
+    q: "What is a component footprint in PCB design?", 
+    opts: [{t:"The 3D model height", c:false}, {t:"The physical pattern of copper pads on the PCB where the component will be soldered", c:true}, {t:"The electrical schematic symbol", c:false}], 
+    exp: "<b>Concept: PCB Footprints</b><br>When designing a PCB, the 'footprint' (or land pattern) is the <b>physical 2D pattern of copper pads</b> drawn on the board. It must perfectly match the size and spacing of the physical component's pins so that when the robot places the chip down, it fits exactly and can be soldered." 
+  }
+];
+
+function shuffle(array) {
+  let currentIndex = array.length, randomIndex;
+  while (currentIndex !== 0) {
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+  }
+  return array;
+}
+
+let questionQueue = [];
+let completedResults = [];
+let totalQuestions = 0;
+let currentQ = null;
+let scoreCorrect = 0;
+let scoreWrong = 0;
+
+function toggleLiveScore() {
+  const isChecked = document.getElementById('toggle-livescore').checked;
+  document.getElementById('live-score-container').style.display = isChecked ? 'flex' : 'none';
+}
+
+function startQuiz() {
+  questionQueue = rawDatabase.map(q => ({
+    q: q.q,
+    opts: shuffle([...q.opts]),
+    exp: q.exp
+  }));
+  questionQueue = shuffle(questionQueue);
+  totalQuestions = questionQueue.length;
+  
+  document.getElementById('start-screen').style.display = 'none';
+  document.getElementById('quiz-screen').style.display = 'block';
+  
+  toggleLiveScore();
+  loadNextQuestion();
+}
+
+function loadNextQuestion() {
+  if (questionQueue.length === 0) {
+    finishQuiz();
+    return;
+  }
+  
+  currentQ = questionQueue.shift();
+  
+  const completedCount = completedResults.length;
+  document.getElementById('question-counter').innerText = `Completed: ${completedCount} / ${totalQuestions}`;
+  const percentage = Math.round((completedCount / totalQuestions) * 100);
+  document.getElementById('percentage-counter').innerText = `${percentage}%`;
+  document.getElementById('progress-fill').style.width = `${percentage}%`;
+  
+  document.getElementById('btn-submit').style.display = 'block';
+  document.getElementById('btn-skip').style.display = 'block';
+  document.getElementById('btn-next').style.display = 'none';
+  document.getElementById('explanation-container').style.display = 'none';
+
+  document.getElementById('q-text').innerText = currentQ.q;
+  
+  const optsContainer = document.getElementById('options-container');
+  optsContainer.innerHTML = '';
+  
+  currentQ.opts.forEach((opt, idx) => {
+    const label = document.createElement('label');
+    label.className = `option-label`;
+    label.onclick = (e) => {
+      e.preventDefault(); 
+      toggleOption(label);
+    };
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.value = opt.t;
+    
+    const textNode = document.createTextNode(opt.t);
+    
+    label.appendChild(checkbox);
+    label.appendChild(textNode);
+    optsContainer.appendChild(label);
+  });
+}
+
+function toggleOption(labelElement) {
+  const checkbox = labelElement.querySelector('input');
+  checkbox.checked = !checkbox.checked;
+  
+  if (checkbox.checked) {
+    labelElement.classList.add('selected');
+  } else {
+    labelElement.classList.remove('selected');
+  }
+}
+
+function skipQuestion() {
+  questionQueue.push(currentQ);
+  loadNextQuestion();
+}
+
+function arraysMatchIgnoreOrder(arr1, arr2) {
+  if (arr1.length !== arr2.length) return false;
+  const sorted1 = [...arr1].sort();
+  const sorted2 = [...arr2].sort();
+  return sorted1.every((val, index) => val === sorted2[index]);
+}
+
+function submitAnswer() {
+  const selectedOpts = [];
+  
+  document.querySelectorAll('.option-label').forEach(label => {
+    const cb = label.querySelector('input');
+    const optText = cb.value;
+    const isCorrectOpt = currentQ.opts.find(o => o.t === optText).c;
+    
+    label.classList.add('disabled');
+    cb.disabled = true;
+    
+    if (cb.checked) {
+      selectedOpts.push(optText);
+      if (isCorrectOpt) {
+        label.classList.add('correct-hit');
+      } else {
+        label.classList.add('wrong-hit');
+      }
+    } else {
+      if (isCorrectOpt) {
+        label.classList.add('missed-correct');
+      }
+    }
+  });
+  
+  const correctOptionTexts = currentQ.opts.filter(o => o.c).map(o => o.t);
+  const isCorrect = arraysMatchIgnoreOrder(correctOptionTexts, selectedOpts);
+  
+  if (isCorrect) {
+    scoreCorrect++;
+    document.getElementById('val-correct').innerText = scoreCorrect;
+  } else {
+    scoreWrong++;
+    document.getElementById('val-wrong').innerText = scoreWrong;
+  }
+  
+  completedResults.push({
+    q: currentQ.q,
+    userSelectedTexts: selectedOpts,
+    correctOptionTexts: correctOptionTexts,
+    isCorrect: isCorrect
+  });
+  
+  document.getElementById('explanation-text').innerHTML = currentQ.exp;
+  document.getElementById('explanation-container').style.display = 'block';
+  
+  document.getElementById('btn-submit').style.display = 'none';
+  document.getElementById('btn-skip').style.display = 'none';
+  document.getElementById('btn-next').style.display = 'block';
+}
+
+function moveToNext() {
+  loadNextQuestion();
+}
+
+function finishQuiz() {
+  document.getElementById('quiz-screen').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
+  
+  const reviewContainer = document.getElementById('review-container');
+  reviewContainer.innerHTML = '';
+  
+  completedResults.forEach((res, index) => {
+    const card = document.createElement('div');
+    card.className = `review-card ${res.isCorrect ? 'correct' : 'incorrect'}`;
+    
+    const badge = document.createElement('div');
+    badge.className = `review-badge ${res.isCorrect ? 'badge-correct' : 'badge-incorrect'}`;
+    badge.innerText = res.isCorrect ? 'Correct (+1)' : 'Incorrect (0)';
+    
+    const questionEl = document.createElement('div');
+    questionEl.className = 'review-question';
+    questionEl.innerText = `${index + 1}. ${res.q}`;
+    
+    const userAnswerEl = document.createElement('div');
+    userAnswerEl.className = 'answer-block';
+    userAnswerEl.innerHTML = `<strong>Your answer:</strong>`;
+    const userList = document.createElement('ul');
+    userList.className = 'answer-list';
+    if(res.userSelectedTexts.length === 0) {
+      userList.innerHTML = `<li style="color:var(--text-muted)"><em>Nothing selected</em></li>`;
+    } else {
+      res.userSelectedTexts.forEach(ans => {
+        userList.innerHTML += `<li>${ans}</li>`;
+      });
+    }
+    userAnswerEl.appendChild(userList);
+    
+    const correctAnswerEl = document.createElement('div');
+    correctAnswerEl.className = 'answer-block';
+    correctAnswerEl.style.marginTop = '1rem';
+    correctAnswerEl.innerHTML = `<strong>Correct answer:</strong>`;
+    const correctList = document.createElement('ul');
+    correctList.className = 'answer-list';
+    res.correctOptionTexts.forEach(ans => {
+      correctList.innerHTML += `<li>${ans}</li>`;
+    });
+    correctAnswerEl.appendChild(correctList);
+    
+    card.appendChild(badge);
+    card.appendChild(questionEl);
+    card.appendChild(userAnswerEl);
+    if (!res.isCorrect) card.appendChild(correctAnswerEl);
+    
+    reviewContainer.appendChild(card);
+  });
+  
+  const percentage = (scoreCorrect / totalQuestions) * 100;
+  const ringColor = percentage >= 50 ? 'var(--success)' : 'var(--error)';
+  document.getElementById('score-circle').style.background = `conic-gradient(${ringColor} ${percentage}%, rgba(255,255,255,0.1) 0%)`;
+  document.getElementById('score-text').innerHTML = `${scoreCorrect}<span>/${totalQuestions}</span>`;
+}
+</script>
+</body>
+</html>
