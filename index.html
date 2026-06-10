@@ -212,7 +212,7 @@
   <!-- START SCREEN -->
   <div id="start-screen" class="glass-card">
     <h1>CAG Exam Simulator</h1>
-    <p class="subtitle">60 Questions. Randomized order.<br>Select all correct options for each question to earn the point.</p>
+    <p class="subtitle">Contains 47 official exam questions + 15 randomly selected custom questions (Total: 62).<br>Select all correct options for each question to earn the point.</p>
     <button class="btn btn-primary" onclick="startQuiz()">Start the Exam</button>
   </div>
   
@@ -273,6 +273,9 @@
   </div>
 </div>
 
+<script src="./custom_questions/custom_pool_part1.js"></script>
+<script src="./custom_questions/custom_pool_part2.js"></script>
+<script src="./custom_questions/custom_pool_part3.js"></script>
 <script>
 const rawDatabase = [
   { 
@@ -600,7 +603,22 @@ function toggleLiveScore() {
 }
 
 function startQuiz() {
-  questionQueue = rawDatabase.map(q => ({
+  let combinedCustom = [...customPoolPart1, ...customPoolPart2, ...customPoolPart3];
+  combinedCustom = shuffle(combinedCustom);
+  
+  // Take 15 and tag them
+  let selectedCustom = combinedCustom.slice(0, 15).map(q => ({
+    q: `<div style="color: #f59e0b; font-size: 0.65em; margin-bottom: 8px; font-weight: 800; letter-spacing: 1px; background: rgba(245, 158, 11, 0.15); display: inline-block; padding: 2px 8px; border-radius: 4px;">CUSTOM</div><br>` + q.q,
+    opts: q.opts,
+    exp: q.exp
+  }));
+  
+  // Take 47 official
+  let officialQuestions = shuffle([...rawDatabase]).slice(0, 47);
+  
+  let finalDatabase = [...officialQuestions, ...selectedCustom];
+
+  questionQueue = finalDatabase.map(q => ({
     q: q.q,
     opts: shuffle([...q.opts]),
     exp: q.exp
@@ -634,7 +652,7 @@ function loadNextQuestion() {
   document.getElementById('btn-next').style.display = 'none';
   document.getElementById('explanation-container').style.display = 'none';
 
-  document.getElementById('q-text').innerText = currentQ.q;
+  document.getElementById('q-text').innerHTML = currentQ.q;
   
   const optsContainer = document.getElementById('options-container');
   optsContainer.innerHTML = '';
