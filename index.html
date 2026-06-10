@@ -273,9 +273,7 @@
   </div>
 </div>
 
-<script src="./custom_questions/custom_pool_part1.js"></script>
-<script src="./custom_questions/custom_pool_part2.js"></script>
-<script src="./custom_questions/custom_pool_part3.js"></script>
+<script src="./custom_questions/custom_questions.js"></script>
 <script>
 const rawDatabase = [
   { 
@@ -603,7 +601,7 @@ function toggleLiveScore() {
 }
 
 function startQuiz() {
-  let combinedCustom = [...customPoolPart1, ...customPoolPart2, ...customPoolPart3];
+  let combinedCustom = [...customQuestions];
   combinedCustom = shuffle(combinedCustom);
   
   // Take 15 and tag them
