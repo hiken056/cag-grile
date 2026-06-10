@@ -770,7 +770,7 @@ function finishQuiz() {
     
     const questionEl = document.createElement('div');
     questionEl.className = 'review-question';
-    questionEl.innerText = `${index + 1}. ${res.q}`;
+    questionEl.innerHTML = `${index + 1}. ${res.q}`;
     
     const userAnswerEl = document.createElement('div');
     userAnswerEl.className = 'answer-block';
