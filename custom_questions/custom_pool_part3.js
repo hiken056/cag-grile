@@ -1,102 +1,272 @@
 const customPoolPart3 = [
   {
-    q: "What does 'Management by Objectives' transition into in modern, adaptable enterprises?",
-    opts: [{t:"Management by continuous learning and improvement", c:true}, {t:"Total Quality Management (TQM)", c:false}, {t:"Management by strict quotas", c:false}, {t:"Management by exceptions", c:false}],
-    exp: "<b>Concept: Enterprise Management</b><br>Setting rigid goals (objectives) for a year is outdated because the market changes too fast. The modern approach is Agile-style continuous learning, where the company constantly adapts its goals and learns from its iterative failures."
+    q: "In the software environment of PCB design, the term 'Footprint' refers to:",
+    opts: [
+      {t:"The exact 2D geometric arrangement and sizing of the copper pads required to physically solder a specific component to the board.", c:true}, 
+      {t:"The total amount of electrical wattage the component is rated to consume during peak operational load conditions.", c:false}, 
+      {t:"The physical 3D volumetric height profile of the component, which is strictly used for calculating enclosure heat dissipation.", c:false}, 
+      {t:"The physical land pattern that must perfectly match the metallic lead dimensions of the real-world microchip.", c:true}
+    ],
+    exp: "<b>Concept: PCB Design</b><br>The schematic uses logical symbols, but the 'footprint' is the exact, millimeter-perfect drawing of the copper pads on the PCB surface. If the footprint is off by a millimeter, the physical chip's legs will not align with the solder pads."
   },
   {
-    q: "Which group of professionals is intentionally brought into the conceptual design phase in Concurrent Engineering?",
-    opts: [{t:"Only Software Developers", c:false}, {t:"Manufacturing engineers and Marketing specialists", c:true}, {t:"Only Mechanical Engineers", c:false}, {t:"Government regulators", c:false}],
-    exp: "<b>Concept: Concurrent Engineering</b><br>Concurrent Engineering breaks down silos. By bringing Manufacturing (who know how to build it) and Marketing (who know what the customer wants) into the room on Day 1, the Designer avoids making a product that is impossible to build or impossible to sell."
+    q: "The Workstation Transformation step within the GKS pipeline is strictly responsible for:",
+    opts: [
+      {t:"Translating purely logical 3D coordinate data into executable CNC G-code instructions for manufacturing operations.", c:false}, 
+      {t:"Taking device-independent Normalized Coordinates (SCN) and mathematically scaling them to specific Device Coordinates (SCD).", c:true}, 
+      {t:"Mapping abstract image geometry to match the exact physical pixel resolution grid of the currently active output monitor.", c:true}, 
+      {t:"Executing complex Boolean operations on Constructive Solid Geometry primitives to generate entirely new 3D segments.", c:false}
+    ],
+    exp: "<b>Concept: GKS Workstation Transformation</b><br>Normalized coordinates (SCN) are generic and range from 0 to 1. The Workstation Transformation must look at the specific hardware (e.g., a 1080p monitor vs a 4K laser printer) and figure out exactly which physical pixels (SCD) to illuminate to draw the shape."
   },
   {
-    q: "A line is drawn from (0,0,0) to (10,10,10) in CAD. This is an example of:",
-    opts: [{t:"A Synthetic curve", c:false}, {t:"An Analytical curve", c:true}, {t:"A B-spline", c:false}, {t:"A surface of revolution", c:false}],
-    exp: "<b>Concept: Curve Types</b><br>A straight line is the most basic analytical curve. It is defined by a perfect, simple mathematical equation, unlike synthetic curves which rely on complex algorithms to trace between control points."
+    q: "How does the 'Descriptive' model of engineering design fundamentally differ from the 'Prescriptive' model?",
+    opts: [
+      {t:"The Prescriptive model outlines a strict, idealized, linear algorithmic workflow for how design *should* theoretically occur in a vacuum.", c:true}, 
+      {t:"The Descriptive model acknowledges the messy, highly iterative reality of human engineering, actively observing how design *actually* happens.", c:true}, 
+      {t:"The Descriptive model relies entirely on 2D CAD drafting, while the Prescriptive model mandates the explicit use of 3D CSG solid modeling.", c:false}, 
+      {t:"There is absolutely no functional difference between the two models; both terms are used completely interchangeably in modern ISO standards.", c:false}
+    ],
+    exp: "<b>Concept: Design Methodology</b><br>Prescriptive = 'Prescribing' an idealized textbook workflow. Descriptive = 'Describing' the chaotic reality of human engineers jumping back and forth, guessing, generating operations, and evaluating them in rapid, non-linear cycles."
   },
   {
-    q: "Why is 'Feature Recognition' critical for Computer-Aided Process Planning (CAPP)?",
-    opts: [{t:"Because CAPP needs to know what colors to paint the part", c:false}, {t:"Because raw CAD geometry is just dumb faces and edges; CAPP must 'recognize' these as holes or slots to assign the correct machining tools", c:true}, {t:"Because it calculates the financial cost of the part", c:false}, {t:"Because it guides the AGVS robots", c:false}],
-    exp: "<b>Concept: CAPP (Computer-Aided Process Planning)</b><br>A CAD file doesn't say 'I am a hole'. It just says 'Here is a cylinder subtracted from a box'. Feature Recognition algorithms scan that math and logically deduce what the feature is, which is the first step in deciding how to manufacture it."
+    q: "A deep cylindrical pocket milled into a solid block of aluminum is classified as a 'Manufacturing Feature' because:",
+    opts: [
+      {t:"It is completely devoid of any specific geometric dimensions, surface tolerances, or functional engineering significance.", c:false}, 
+      {t:"Its exact geometric boundaries (such as corner radii) are directly dictated by the specific dimensions of the spinning subtractive CNC tool.", c:true}, 
+      {t:"It represents an abstract, theoretical design intent that has not yet been finalized into physical, machinable coordinate geometry.", c:false}, 
+      {t:"Its defining characteristics rely heavily on the physical constraints, tool access, and pathing of the manufacturing process used to create it.", c:true}
+    ],
+    exp: "<b>Concept: Feature Classification</b><br>A pocket isn't just an abstract geometric hole; it's defined by how the machine removes the metal. The corner radii of the pocket will perfectly match the radius of the spinning end-mill tool used to cut it, making its geometry a direct byproduct of the manufacturing process."
   },
   {
-    q: "What defines 'Discrete Event Systems' in production automation?",
-    opts: [{t:"Chemicals mixing in a continuous flow", c:false}, {t:"Manufacturing items (like cars or phones) in distinct, countable steps or events", c:true}, {t:"Generating electricity constantly", c:false}, {t:"Software crashing randomly", c:false}],
-    exp: "<b>Concept: Production Automation</b><br>Unlike continuous systems (oil refineries, water treatment), discrete systems build physical, countable parts. An 'event' triggers the next step (e.g., Part arrives -> Sensor triggers -> Robot drills hole)."
+    q: "The management philosophy of 'Continuous Learning and Improvement' (often termed Agile or Kaizen) primarily involves:",
+    opts: [
+      {t:"Establishing rigid, immutable ten-year production quotas that middle management is strictly forbidden to alter under any circumstances.", c:false}, 
+      {t:"A highly adaptable approach where production goals and daily workflows are dynamically refined based on constant real-world data feedback.", c:true}, 
+      {t:"Empowering cross-functional teams to constantly iterate on their processes, thereby continuously elevating product quality and system efficiency.", c:true}, 
+      {t:"Managing lower-level employees strictly by exceptions, ensuring that any deviation from the original static corporate plan is aggressively punished.", c:false}
+    ],
+    exp: "<b>Concept: Modern Management</b><br>In highly volatile global markets, rigid long-term plans are useless. Continuous learning ensures the enterprise constantly evolves its processes, empowering teams to improve quality incrementally and adapt rapidly to new technologies or market demands."
   },
   {
-    q: "What is the primary characteristic of a 'Ruled Surface' in 3D modeling?",
-    opts: [{t:"It is generated by sweeping a straight line across two different boundary curves", c:true}, {t:"It is generated by revolving a circle", c:false}, {t:"It is a perfect solid sphere", c:false}, {t:"It is defined by Boolean subtraction", c:false}],
-    exp: "<b>Concept: 3D Surface Generation</b><br>A ruled surface is created when you take a straight line (the rule) and slide it along two distinct rails or curves. For example, a cylinder is a ruled surface (sliding a straight line around two circular rails)."
+    q: "The fundamental software paradigm summarized by the equation 'Data + Operations = Object' directly refers to:",
+    opts: [
+      {t:"Legacy Procedural Programming languages such as C and Pascal, which strictly separate logic from data variables.", c:false}, 
+      {t:"Object-Oriented Programming (OOP) methodologies heavily utilized in modern modular CAD software architectures.", c:true}, 
+      {t:"The strict encapsulation of raw static data attributes and the active methods (functions) that manipulate them into a single coherent entity.", c:true}, 
+      {t:"Standard Relational Database Management Systems (RDBMS) that strictly isolate all data storage arrays from the application logic layer.", c:false}
+    ],
+    exp: "<b>Concept: Software Architecture</b><br>This is the core definition of Object-Oriented software (like Java, C++, Python). Instead of separating a dumb database from the application code, OOP encapsulates the raw Data and the Operations (methods) that act upon it into a single intelligent 'Object'."
   },
   {
-    q: "In GKS, what state must the system be in to actively record a new geometric shape?",
-    opts: [{t:"Workstation Open", c:false}, {t:"GKS Closed", c:false}, {t:"Segment Open", c:true}, {t:"Segment Closed", c:false}],
-    exp: "<b>Concept: GKS State Machine</b><br>A segment is a container for graphics. To put graphics inside the container, you must transition the system into the 'Segment Open' state. Once open, any primitives you draw are recorded into that segment."
+    q: "A fundamental distinction between 'Continuous' and 'Discrete Event' manufacturing processes is that:",
+    opts: [
+      {t:"Continuous manufacturing involves the unbroken, unending flow of materials, such as pumping crude oil through a high-pressure chemical refinery.", c:true}, 
+      {t:"Discrete manufacturing produces distinct, highly countable items, such as assembling complex automobiles or soldering electronic smartphones.", c:true}, 
+      {t:"Discrete manufacturing relies heavily on continuous fluid dynamic equations to precisely control the flow rate of the robotic assembly line.", c:false}, 
+      {t:"Continuous manufacturing systems are inherently much easier to pause and restart rapidly without suffering massive material or thermal losses.", c:false}
+    ],
+    exp: "<b>Concept: Production Types</b><br>Discrete manufacturing produces distinct items (cars, screws, phones). The automation relies on distinct, triggerable events (Part arrives -> Sensor trips -> Robot moves). Continuous manufacturing deals with fluids and gasses that never stop flowing and cannot be easily paused."
   },
   {
-    q: "Why can't you apply a geometric transformation (like rotation) to an OPEN segment in GKS?",
-    opts: [{t:"Because rotation is physically impossible in 2D", c:false}, {t:"Because the segment is currently recording new primitives and hasn't defined its final boundaries yet", c:true}, {t:"Because the workstation is turned off", c:false}, {t:"Because open segments are instantly deleted", c:false}],
-    exp: "<b>Concept: GKS Segment Rules</b><br>Transformations in GKS are applied to the segment as a whole entity. While a segment is open, it is incomplete. The math cannot apply a rotation matrix to an undefined, growing entity. It must be closed first."
+    q: "Which of the following characteristics distinguish an 'Abstract Feature' during the conceptual phase of product design?",
+    opts: [
+      {t:"It possesses significant functional engineering intent, but its exact geometric dimensions and physical tolerances are not yet mathematically finalized.", c:true}, 
+      {t:"It is entirely devoid of engineering significance and is included solely as an aesthetic placeholder to satisfy the marketing department.", c:false}, 
+      {t:"It represents a critical functional requirement (e.g., 'heat dissipation') before the physical form (e.g., 'copper cooling fins') is completely defined.", c:true}, 
+      {t:"It physically cannot be manufactured using traditional subtractive machining methods under any known modern circumstances.", c:false}
+    ],
+    exp: "<b>Concept: Abstract Features</b><br>An abstract feature represents the *intent* of the design before the exact math is done. Knowing you need a 'ventilated area' is the abstract intent; engineering the exact 5mm louvers is the detailed geometric finalization."
   },
   {
-    q: "What is the function of the WISS (Workstation Independent Segment Storage) in GKS?",
-    opts: [{t:"It stores segments permanently on the hard drive", c:false}, {t:"It temporarily stores segments in a generic, device-independent format so they can be sent to multiple different workstations later", c:true}, {t:"It draws the CAD geometry", c:false}, {t:"It physically manufactures the part", c:false}],
-    exp: "<b>Concept: GKS Architecture</b><br>WISS acts as a central memory bank. Instead of sending a drawing directly to a printer and losing it, you save it in WISS. From WISS, you can blast that exact same drawing to a 1080p screen, a 4k screen, and a plotter simultaneously."
+    q: "When discussing Artificial Intelligence in manufacturing, the 'Knowledge Base' component of an Expert System is responsible for:",
+    opts: [
+      {t:"Functioning as the active algorithmic processor, recursively applying logical IF-THEN rules to deduce actionable, real-time solutions.", c:false}, 
+      {t:"Acting as the static, comprehensive database, permanently archiving pure geometric facts, heuristics, and historical manufacturing records.", c:true}, 
+      {t:"Dynamically generating the photorealistic 3D CAD visual interface presented to the human operator during the drafting phase.", c:false}, 
+      {t:"Storing the raw, uncompiled knowledge rules provided by human experts so the Inference Engine can later query them.", c:true}
+    ],
+    exp: "<b>Concept: Expert Systems (AI)</b><br>An expert system splits the brain in two. The Knowledge Base holds the dumb facts and the raw rules. The Inference Engine is the active code algorithm that applies its library of logical rules to those facts to solve complex problems."
   },
   {
-    q: "Which factor is an 'Internal' influence on an enterprise's adaptability?",
-    opts: [{t:"Government Public Policy", c:false}, {t:"Market Demand", c:false}, {t:"The Technology systems the enterprise chooses to implement", c:true}, {t:"Client requests", c:false}],
-    exp: "<b>Concept: Enterprise Management</b><br>A company adapts using the tools it controls. The management hierarchy and the technology software stack it buys are internal choices. If they buy rigid, outdated technology, their internal adaptability drops."
+    q: "In a fully automated Computer Integrated Manufacturing (CIM) facility, what roles are explicitly assigned to the FMS (Flexible Manufacturing System)?",
+    opts: [
+      {t:"Autonomously handling all internal factory logistics, seamlessly transporting materials between distinct warehousing sectors.", c:false}, 
+      {t:"Serving as a massive, entirely autonomous robotic warehouse managing the long-term inventory of raw metal billets.", c:false}, 
+      {t:"Executing a wide variety of highly complex subtractive machining operations using multiple reconfigurable CNC workstations.", c:true}, 
+      {t:"Adapting rapidly to different product designs and production volumes without requiring total factory shutdowns for manual tool retooling.", c:true}
+    ],
+    exp: "<b>Concept: Factory Hardware</b><br>The FMS (Flexible Manufacturing System) is the actual 'factory' part of the factory. It consists of highly adaptable CNC machines that can rapidly switch from cutting car parts to cutting airplane parts without human intervention."
   },
   {
-    q: "What does 'SCD' stand for in the GKS transformation pipeline?",
-    opts: [{t:"System Coordinates Device", c:true}, {t:"System Coordinates Descriptive", c:false}, {t:"Screen Color Display", c:false}, {t:"Segment Control Data", c:false}],
-    exp: "<b>Concept: GKS Pipeline</b><br>SCD represents the final step in the graphics pipeline. It stands for System Coordinates Device, which is the specific grid of physical pixels (or ink dots) for the exact hardware monitor or printer being used."
+    q: "What defines 'Constructive Solid Geometry' (CSG) as a fundamentally unique 3D modeling paradigm compared to B-Rep?",
+    opts: [
+      {t:"CSG builds highly complex volumetric models by strictly combining basic solid mathematical primitives (blocks, cylinders, spheres).", c:true}, 
+      {t:"CSG relies entirely on Boolean mathematical operations (Union, Subtraction, Intersection) to define the final topological shape.", c:true}, 
+      {t:"CSG models consist entirely of zero-thickness outer surface boundaries and are completely unable to represent true volumetric density.", c:false}, 
+      {t:"CSG does not explicitly store the boundary faces of the final object, but rather stores the logical algorithmic history (the CSG tree) used to create it.", c:true}
+    ],
+    exp: "<b>Concept: 3D Modeling Types</b><br>CSG uses Boolean math on primitives. It doesn't actually 'draw' the faces; it remembers the math (e.g., Block A minus Cylinder B) in a CSG tree. B-Rep, on the other hand, explicitly mathematically stitches every single outer face and edge together into a watertight boundary."
   },
   {
-    q: "What is the purpose of 'Dimension Lines' in technical drafting?",
-    opts: [{t:"To physically cut the part", c:false}, {t:"To visually indicate the direction and extent of a measurement across the part", c:true}, {t:"To write paragraphs of text", c:false}, {t:"To mark the center of a circle", c:false}],
-    exp: "<b>Concept: Technical Drafting</b><br>A dimension line is the thin line (usually with arrows on the ends) that spans the gap between two extension lines. It acts as the visual 'ruler' showing exactly what distance the numerical text is describing."
+    q: "Why does the concept of 'Parametric Modeling' dramatically accelerate the modern mechanical engineering design process?",
+    opts: [
+      {t:"Because it allows designers to easily alter a single fundamental dimension, triggering the software to automatically recalculate and update all dependent geometry.", c:true}, 
+      {t:"Because it utilizes defined mathematical constraints (such as 'parallel', 'tangent', or 'coincident') to logically govern the structural shape of the model.", c:true}, 
+      {t:"Because the system possesses an inherent ability to automatically write, compile, and execute procedural C++ code for embedded microcontrollers.", c:false}, 
+      {t:"Because it prevents the designer from ever making a mistake by strictly limiting the geometric complexity of the parts that can be drawn.", c:false}
+    ],
+    exp: "<b>Concept: Parametric Modeling</b><br>Parametric design uses variables and constraints (e.g., 'Length = 10', 'Hole is tangent to edge'). If you update a variable, the CAD engine recalculates everything and stretches the part while maintaining all logical constraint rules, saving thousands of hours of manual redrawing."
   },
   {
-    q: "In the context of CIM, what does the AGVS handle?",
-    opts: [{t:"Automated Guided Vehicle System - handles internal factory floor transport between machines", c:true}, {t:"Automated Geometric Visualization System - renders 3D graphics", c:false}, {t:"Automated G-code Validation System - checks code for errors", c:false}, {t:"Automated Storage System - warehouses raw materials", c:false}],
-    exp: "<b>Concept: Factory Hardware</b><br>AGVS consists of the mobile robots driving around the factory. They are the 'veins' of the factory, moving raw materials from the ASRS warehouse to the FMS machining cells, and moving finished parts to shipping."
+    q: "The 'Extrusion' sweeping operation in 3D modeling is best characterized by which geometric properties?",
+    opts: [
+      {t:"It requires sweeping a closed 2D geometric profile along a strictly linear, straight trajectory to generate uniform volumetric height.", c:true}, 
+      {t:"It strictly involves revolving a 2D profile around a defined central axis to create a completely symmetrical cylindrical shape.", c:false}, 
+      {t:"It can perfectly preserve the exact original 2D cross-section uniformly throughout the entirety of the generated 3D solid body.", c:true}, 
+      {t:"It fundamentally relies on a generator profile and a straight director curve to dictate the topological boundaries of the resulting solid.", c:true}
+    ],
+    exp: "<b>Concept: Sweeping Operations</b><br>Extrusion is the simplest form of sweeping. You take a flat 2D shape (the generator profile) and pull it along a perfectly straight line (the linear trajectory/director) to give it volume. The cross-section remains perfectly uniform."
   },
   {
-    q: "Why do engineers use 'Homogeneous Coordinates' (1x4 matrix) instead of 'Natural Coordinates' (1x3 matrix) in 3D graphics?",
-    opts: [{t:"Because it looks more professional", c:false}, {t:"Because it unifies Translation, Rotation, and Scaling into a single multiplication process, drastically speeding up rendering", c:true}, {t:"Because CAD monitors require 4 dimensions", c:false}, {t:"Because it removes the Z-axis", c:false}],
-    exp: "<b>Concept: Computer Graphics Math</b><br>Without the 4th dummy coordinate 'W', translating (moving) an object requires matrix addition, while rotating requires matrix multiplication. Homogeneous coordinates trick the math so EVERYTHING can be done via fast, chained multiplication."
+    q: "In the context of standard 2D industrial drafting, the 'LAYER' system serves what specific organizational purpose?",
+    opts: [
+      {t:"It logically groups and stacks entirely different conceptual parts of a drawing on virtual, transparent, toggleable organizational sheets.", c:true}, 
+      {t:"It permanently merges intersecting geometric entities into a single, completely uneditable base layer required for final blueprint printing.", c:false}, 
+      {t:"It allows architectural walls, electrical wiring, and plumbing schematics to exist in the exact same file without causing an overwhelming visual disaster.", c:true}, 
+      {t:"It mathematically converts 2D planar lines into 3D volumetric solid blocks through a series of complex boolean extrusion commands.", c:false}
+    ],
+    exp: "<b>Concept: File Organization</b><br>Layers allow engineers to organize massive, complex drawings. By placing walls on one layer and electrical wiring on another, users can toggle visibility to isolate specific systems, preventing the drawing from becoming an unreadable mess."
   },
   {
-    q: "What is the difference between an 'Abstract Feature' and a 'Concrete Feature'?",
-    opts: [{t:"Abstract features exist in the physical world; Concrete features do not", c:false}, {t:"Abstract features represent functional intent without final exact geometry; Concrete features have every dimension perfectly defined", c:true}, {t:"Abstract features are only used for marketing; Concrete features are for engineering", c:false}, {t:"There is no difference", c:false}],
-    exp: "<b>Concept: Conceptual Design</b><br>During brainstorming, you might place an 'abstract' cylinder and call it a 'shaft', knowing it will transfer power. You don't know its exact thickness yet. Once you do the stress math and lock its diameter to exactly 25mm, it becomes a concrete feature."
+    q: "A P&ID (Piping and Instrumentation Diagram) differs from a standard CAD structural model primarily because:",
+    opts: [
+      {t:"It provides a highly detailed, mathematically accurate 3D volumetric representation of the entire chemical refinery layout.", c:false}, 
+      {t:"It serves strictly as a 2D logical schematic, mapping the functional flow of process fluids through pipes, control valves, and sensors.", c:true}, 
+      {t:"It utilizes standardized abstract symbols (such as ISA standards) rather than representing the true physical or spatial dimensions of the components.", c:true}, 
+      {t:"It completely ignores real-world spatial distances, prioritizing functional fluid logic over accurate architectural scaling.", c:true}
+    ],
+    exp: "<b>Concept: Industrial Schematics</b><br>A P&ID is a logical flow diagram. Much like a subway map, it does not care about true distances, physical weight, or 3D space. It uses standard abstract symbols to show engineers exactly how tanks, valves, and sensors logically connect."
   },
   {
-    q: "What is a 'Polymarker' used for in 2D drafting?",
-    opts: [{t:"To draw a straight line between two points", c:false}, {t:"To fill an area with a solid color", c:false}, {t:"To place a specific, identifiable symbol (like a crosshair) at a single exact coordinate", c:true}, {t:"To extrude a 2D shape into 3D", c:false}],
-    exp: "<b>Concept: GKS Primitives</b><br>If an engineer needs to clearly mark the exact center of rotation for a gear, they don't draw a tiny circle. They use a Polymarker primitive to drop a crosshair exactly at that node."
+    q: "In the context of electrical manufacturing, Surface Mount Device (SMD) technology offers which advantages over older Through-Hole Technology (THT)?",
+    opts: [
+      {t:"SMD components are significantly larger and therefore much easier for human technicians to manually solder using basic hand tools.", c:false}, 
+      {t:"SMD components do not require physical holes to be drilled entirely through the fiberglass board, drastically reducing complex manufacturing costs.", c:true}, 
+      {t:"SMD allows components to be densely packed on both the top and bottom surfaces of the PCB, enabling the extreme miniaturization of modern devices.", c:true}, 
+      {t:"Because the components do not penetrate the board, internal routing layers within the PCB are freed up for highly complex copper traces.", c:true}
+    ],
+    exp: "<b>Concept: Electronic Manufacturing</b><br>SMDs are glued and soldered directly to the surface pads without pins passing through the board. This eliminates expensive drilling costs, frees up internal layers, and allows both sides of the board to be covered in microscopic chips."
   },
   {
-    q: "Which Boolean operation is used to hollow out a cube by pushing a cylinder through it?",
-    opts: [{t:"Union", c:false}, {t:"Intersection", c:false}, {t:"Subtraction / Difference", c:true}, {t:"Sweeping", c:false}],
-    exp: "<b>Concept: CSG Operations</b><br>Subtraction (or Difference) takes the volume of Object A and permanently cuts away any overlapping volume from Object B. Pushing a cylinder through a cube and subtracting it leaves a perfect cylindrical hole."
+    q: "During the prescriptive design phase, the 'Detail Design' step is explicitly responsible for:",
+    opts: [
+      {t:"Brainstorming wildly different abstract concepts to rapidly evaluate a multitude of potential creative solutions.", c:false}, 
+      {t:"Finalizing the exact, millimeter-perfect geometric dimensions, tolerances, and material specifications required to physically manufacture the product.", c:true}, 
+      {t:"Creating the highly detailed, watertight 3D solid CAD models that will be directly exported to the CAM software for G-code generation.", c:true}, 
+      {t:"Conducting initial market research to determine the financial viability and overall consumer demand for the proposed product definition.", c:false}
+    ],
+    exp: "<b>Concept: Prescriptive Design</b><br>The logical, textbook flow of prescriptive design is: 1) Problem Definition (identifying the need), 2) Conceptual Design (brainstorming abstract solutions), and 3) Detail Design (engineering the final concrete CAD models, tolerances, and blueprints)."
   },
   {
-    q: "How does the 'Descriptive' model of design differ from the 'Prescriptive' model?",
-    opts: [{t:"Descriptive observes the messy, rapid trial-and-error loops of real engineers; Prescriptive defines the ideal, strict logical steps engineers *should* take", c:true}, {t:"Descriptive is only for 2D; Prescriptive is for 3D", c:false}, {t:"Descriptive creates the G-code; Prescriptive creates the CAD file", c:false}, {t:"There is no difference", c:false}],
-    exp: "<b>Concept: Design Methodology</b><br>The Prescriptive model is a clean textbook flowchart (Problem -> Concept -> Detail). The Descriptive model studies human psychology and realizes that humans actually rapidly guess (Generate Operations) and check (Evaluate) in messy loops."
+    q: "What defines 'Concurrent Engineering' as a superior methodology to traditional sequential engineering?",
+    opts: [
+      {t:"It fundamentally requires significantly longer lead times to complete projects due to the massive overhead of cross-departmental meetings.", c:false}, 
+      {t:"It breaks down isolated departments, requiring design, manufacturing, and marketing teams to collaborate in parallel from day one.", c:true}, 
+      {t:"It completely removes human decision-making from the process by relying entirely on AI-driven expert systems.", c:false}, 
+      {t:"It drastically reduces costly late-stage redesigns by ensuring manufacturability concerns are addressed during the initial conceptual phase.", c:true}
+    ],
+    exp: "<b>Concept: Modern Management</b><br>Concurrent engineering replaces the old 'throw it over the wall' sequential method. By having manufacturing engineers review the CAD models while they are still being conceptualized, the company avoids designing parts that are physically impossible or too expensive to manufacture."
   },
   {
-    q: "What is the future concept for 'technology-oriented solutions'?",
-    opts: [{t:"Highly custom, bespoke software written from scratch for every company", c:false}, {t:"Generic, highly adaptable packages and systems that can scale and configure to any business out-of-the-box", c:true}, {t:"Removing all technology from the factory", c:false}, {t:"Monolithic databases", c:false}],
-    exp: "<b>Concept: Future IT Architecture</b><br>In the past, companies paid millions to write custom software from scratch. Today (and in the future), companies buy massive, generic ERP systems (like SAP) that are flexible enough to adapt to their specific business needs."
+    q: "Within the GKS transformation pipeline, the acronym 'SCR' stands for and represents what specific type of data?",
+    opts: [
+      {t:"System Coordinates Normalized, which represents the data mapped perfectly to the hardware display screen.", c:false}, 
+      {t:"System Coordinates Real, representing the pure mathematical coordinate data of the object in its actual continuous 3D world space.", c:true}, 
+      {t:"Screen Device Resolution, indicating the exact pixel density of the currently active workstation.", c:false}, 
+      {t:"It is the unscaled, device-independent geometric data before any workstation transformation is applied.", c:true}
+    ],
+    exp: "<b>Concept: GKS Pipeline</b><br>SCR (System Coordinates Real) is the actual mathematical world-space coordinates. SCN (System Coordinates Normalized) scales it between 0 and 1. SCD (System Coordinates Device) finally maps it to actual physical pixels."
   },
   {
-    q: "In the formula 'Collections of intelligent agents = intelligent systems', what does an 'intelligent agent' represent?",
-    opts: [{t:"A human manager", c:false}, {t:"A small, independent, specialized piece of software (microservice) that collaborates with other agents to run the factory", c:true}, {t:"A dumb database", c:false}, {t:"A raw block of metal", c:false}],
-    exp: "<b>Concept: Software Architecture</b><br>Instead of one giant program running the whole factory, modern architecture uses hundreds of tiny software 'agents'. One agent only handles conveyor belt speed. Another only handles temperature. By talking to each other, they create a massive, intelligent system."
+    q: "In a fully integrated CIM factory, the AGVS (Automated Guided Vehicle System) is primarily responsible for:",
+    opts: [
+      {t:"Physically cutting and milling the raw metal billets into finished geometric parts.", c:false}, 
+      {t:"Autonomously handling internal logistics and transporting parts between distinct machining cells across the factory floor.", c:true}, 
+      {t:"Replacing human forklift operators by using magnetic tape, lasers, or vision systems to navigate complex facility layouts.", c:true}, 
+      {t:"Generating the highly complex G-code routing instructions required by the CNC machines.", c:false}
+    ],
+    exp: "<b>Concept: Factory Hardware</b><br>AGVS consists of mobile robotic carts. They do no machining and write no code; their sole purpose is autonomous physical transport and logistics, moving materials from the warehouse (ASRS) to the flexible machining systems (FMS)."
+  },
+  {
+    q: "Which of the following are examples of 'internal factors' that determine an enterprise's overall adaptability?",
+    opts: [
+      {t:"Sudden shifts in international trade laws and government public policy.", c:false}, 
+      {t:"The flexibility and modernity of the company's internal technology stack and manufacturing hardware.", c:true}, 
+      {t:"The agility of the company's management structure and corporate decision-making hierarchy.", c:true}, 
+      {t:"Drastic changes in global market demand and consumer preferences.", c:false}
+    ],
+    exp: "<b>Concept: Enterprise Management</b><br>Internal factors are things the company directly controls (Management, Technology, Organization). External factors are completely outside their direct control (Markets, Laws, Competitors, Client demands)."
+  },
+  {
+    q: "In the architecture of Artificial Intelligence Expert Systems, the 'Inference Engine' serves what critical purpose?",
+    opts: [
+      {t:"It acts as the static database, storing pure geometric facts and historical manufacturing data.", c:false}, 
+      {t:"It functions as the active algorithmic brain, applying logical IF-THEN rules to the stored data to deduce actionable solutions.", c:true}, 
+      {t:"It is completely responsible for generating the visual 3D CAD interface presented to the human operator.", c:false}, 
+      {t:"It separates the control logic from the raw knowledge base, allowing the system to learn and adapt without rewriting the core database.", c:true}
+    ],
+    exp: "<b>Concept: Expert Systems (AI)</b><br>An expert system splits the brain in two. The Knowledge Base holds the dumb facts. The Inference Engine is the active code algorithm that applies its library of logical rules to those facts to solve complex problems."
+  },
+  {
+    q: "The ASRS (Automated Storage and Retrieval System) module in a factory is characterized by:",
+    opts: [
+      {t:"Acting as a massive, robotic warehouse that manages the inventory of raw materials and finished goods.", c:true}, 
+      {t:"Utilizing towering robotic cranes that autonomously travel down aisles to pull specific storage bins without human intervention.", c:true}, 
+      {t:"Executing the primary subtractive machining operations required to form complex B-Rep models.", c:false}, 
+      {t:"Providing the computational power required to run the factory's ERP (Enterprise Resource Planning) software.", c:false}
+    ],
+    exp: "<b>Concept: Factory Hardware</b><br>ASRS is strictly for storage and retrieval. It is a highly automated warehouse system that hands off bins of materials to the AGVs, completely eliminating the need for human forklift drivers in the storage sector."
+  },
+  {
+    q: "In the GKS standard, transitioning a workstation to the 'Workstation Active' state enables which of the following?",
+    opts: [
+      {t:"It commands the system hardware to completely power down and clear its graphical buffers.", c:false}, 
+      {t:"It allows the workstation to actively receive, process, and render incoming graphical output primitives to the screen.", c:true}, 
+      {t:"It permanently locks all open segments, preventing any future geometric transformations from being applied.", c:false}, 
+      {t:"It officially hooks the initialized hardware into the active GKS pipeline, moving it beyond a merely 'Open' standby status.", c:true}
+    ],
+    exp: "<b>Concept: GKS States</b><br>When a workstation is 'Open', it is powered on and initialized but is sitting in standby. It must be transitioned to 'Workstation Active' before it will actually listen to the pipeline and begin drawing primitives on the screen."
+  },
+  {
+    q: "A P&ID (Piping and Instrumentation Diagram) is an essential industrial document because it:",
+    opts: [
+      {t:"Provides a photorealistic, mathematically accurate 3D solid model of the entire chemical refinery layout.", c:false}, 
+      {t:"Serves as a 2D logical schematic that maps the functional flow of fluids through pipes, valves, and control sensors.", c:true}, 
+      {t:"Utilizes standardized abstract symbols (like ISA standards) rather than representing the true physical dimensions of the components.", c:true}, 
+      {t:"Calculates the precise physical weight and center of gravity of the piping network for structural support engineering.", c:false}
+    ],
+    exp: "<b>Concept: Industrial Schematics</b><br>A P&ID is not a physical map; it is a logical flow diagram. Much like a subway map, it does not care about true distances or 3D space. It uses standard symbols to show engineers exactly how tanks, valves, and sensors logically connect."
+  },
+  {
+    q: "In printed circuit board (PCB) manufacturing, Through-Hole Technology (THT) involves:",
+    opts: [
+      {t:"Gluing microscopic, pin-less components directly to the top copper surface of the board.", c:false}, 
+      {t:"Utilizing components with physical wire leads that must be inserted through holes drilled completely through the fiberglass board.", c:true}, 
+      {t:"Soldering the component leads on the opposite side of the board to establish a strong mechanical and electrical connection.", c:true}, 
+      {t:"Achieving massively higher component density compared to modern Surface Mount Device (SMD) techniques.", c:false}
+    ],
+    exp: "<b>Concept: Electronic Manufacturing</b><br>THT is the older, highly robust method where component pins pass entirely through drilled holes in the PCB. It provides great mechanical strength but severely limits how densely components can be packed compared to modern SMDs."
+  },
+  {
+    q: "Surface Mount Device (SMD) technology has largely replaced THT in modern electronics because:",
+    opts: [
+      {t:"SMD components are significantly larger and therefore much easier for human technicians to manually solder using basic hand tools.", c:false}, 
+      {t:"SMD components do not require physical holes to be drilled entirely through the fiberglass board, drastically reducing complex manufacturing costs.", c:true}, 
+      {t:"SMD allows components to be densely packed on both the top and bottom surfaces of the PCB, enabling the extreme miniaturization of modern devices.", c:true}, 
+      {t:"SMD copper traces are inherently capable of handling immensely higher electrical voltages without any risk of thermal substrate failure.", c:false}
+    ],
+    exp: "<b>Concept: Electronic Manufacturing</b><br>SMDs are glued and soldered directly to the surface pads without pins passing through the board. This eliminates drilling costs and allows both sides of the board to be covered in microscopic chips, making smartphones possible."
   }
 ];
