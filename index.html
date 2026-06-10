@@ -204,6 +204,20 @@
     .nav-buttons { flex-direction: column-reverse; }
     .nav-buttons .btn { width: 100%; }
   }
+  
+  .custom-tag {
+    color: #f59e0b;
+    font-size: 0.65em;
+    margin-bottom: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    background: rgba(245, 158, 11, 0.15);
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
 </style>
 </head>
 <body>
@@ -606,9 +620,10 @@ function startQuiz() {
   
   // Take 15 and tag them
   let selectedCustom = combinedCustom.slice(0, 15).map(q => ({
-    q: `<div style="color: #f59e0b; font-size: 0.65em; margin-bottom: 8px; font-weight: 800; letter-spacing: 1px; background: rgba(245, 158, 11, 0.15); display: inline-block; padding: 2px 8px; border-radius: 4px;">CUSTOM</div><br>` + q.q,
+    q: q.q,
     opts: q.opts,
-    exp: q.exp
+    exp: q.exp,
+    isCustom: true
   }));
   
   // Take 47 official
@@ -619,7 +634,8 @@ function startQuiz() {
   questionQueue = finalDatabase.map(q => ({
     q: q.q,
     opts: shuffle([...q.opts]),
-    exp: q.exp
+    exp: q.exp,
+    isCustom: q.isCustom || false
   }));
   questionQueue = shuffle(questionQueue);
   totalQuestions = questionQueue.length;
@@ -650,7 +666,11 @@ function loadNextQuestion() {
   document.getElementById('btn-next').style.display = 'none';
   document.getElementById('explanation-container').style.display = 'none';
 
-  document.getElementById('q-text').innerHTML = currentQ.q;
+  if (currentQ.isCustom) {
+    document.getElementById('q-text').innerHTML = `<div class="custom-tag">CUSTOM</div><br>` + currentQ.q;
+  } else {
+    document.getElementById('q-text').innerText = currentQ.q;
+  }
   
   const optsContainer = document.getElementById('options-container');
   optsContainer.innerHTML = '';
@@ -738,7 +758,8 @@ function submitAnswer() {
     q: currentQ.q,
     userSelectedTexts: selectedOpts,
     correctOptionTexts: correctOptionTexts,
-    isCorrect: isCorrect
+    isCorrect: isCorrect,
+    isCustom: currentQ.isCustom
   });
   
   document.getElementById('explanation-text').innerHTML = currentQ.exp;
@@ -770,7 +791,11 @@ function finishQuiz() {
     
     const questionEl = document.createElement('div');
     questionEl.className = 'review-question';
-    questionEl.innerHTML = `${index + 1}. ${res.q}`;
+    if (res.isCustom) {
+      questionEl.innerHTML = `${index + 1}. <span class="custom-tag">CUSTOM</span> ${res.q}`;
+    } else {
+      questionEl.innerText = `${index + 1}. ${res.q}`;
+    }
     
     const userAnswerEl = document.createElement('div');
     userAnswerEl.className = 'answer-block';
